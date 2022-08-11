@@ -3,7 +3,7 @@ import time
 
 import flet
 from flet import (Column, Container, Page, Row, Slider, Stack, Text,
-                  TextButton, colors, margin)
+                  TextButton, alignment, colors, margin)
 
 
 class SortingVisualizer:
@@ -24,7 +24,8 @@ class SortingVisualizer:
         controls_to_check = [
             self.gen_new_arr_btn,
             self.slider,
-            self.bubble_sort_btn
+            self.bubble_sort_btn,
+            self.quick_sort_btn 
         ]
         for control in controls_to_check:
             if control.disabled:
@@ -44,12 +45,10 @@ class SortingVisualizer:
                 self.to_sort_lines.content.update()
                 time.sleep(0.01)
                 (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[j].height) = (self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[i].height)
-                self.to_sort_lines.content.update()
                 (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.GREEN, colors.GREEN)
                 self.to_sort_lines.content.update()
                 time.sleep(0.01)
         (self.to_sort_lines.content.controls[i + 1].height, self.to_sort_lines.content.controls[high].height) = (self.to_sort_lines.content.controls[high].height, self.to_sort_lines.content.controls[i + 1].height)
-        self.to_sort_lines.content.update()
         (self.to_sort_lines.content.controls[i + 1].bgcolor, self.to_sort_lines.content.controls[high].bgcolor) = (colors.GREEN, colors.GREEN)
         self.to_sort_lines.content.update()
         return i + 1
@@ -63,21 +62,20 @@ class SortingVisualizer:
             self.quick_sort_vis(pi + 1, high)
 
     def quick_sort(self, e) -> None:
+        self.able_disable_during_sorting()
         self.quick_sort_vis(0, len(self.to_sort_lines.content.controls)-1)
+        self.able_disable_during_sorting()
     
     def bubble_sort(self, e) -> None:
         self.able_disable_during_sorting()
         for i in range(len(self.to_sort_lines.content.controls)):
             for j in range(len(self.to_sort_lines.content.controls)-1-i):
                 if self.to_sort_lines.content.controls[j].height > self.to_sort_lines.content.controls[j+1].height:
-                    self.to_sort_lines.content.controls[j].bgcolor = colors.RED
-                    self.to_sort_lines.content.controls[j+1].bgcolor = colors.RED
+                    (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.RED, colors.RED)
                     self.to_sort_lines.content.update()
                     time.sleep(0.01)
-                    self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[j+1].height = self.to_sort_lines.content.controls[j+1].height, self.to_sort_lines.content.controls[j].height
-                    self.to_sort_lines.content.update()
-                    self.to_sort_lines.content.controls[j].bgcolor = colors.GREEN
-                    self.to_sort_lines.content.controls[j+1].bgcolor = colors.GREEN
+                    (self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[j+1].height) = (self.to_sort_lines.content.controls[j+1].height, self.to_sort_lines.content.controls[j].height)
+                    (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.GREEN, colors.GREEN)
                     self.to_sort_lines.content.update()
                     time.sleep(0.01)
                 self.to_sort_lines.content.controls[j].bgcolor = colors.LIGHT_BLUE
@@ -93,7 +91,7 @@ class SortingVisualizer:
                     width=10,
                     height=random.uniform(100, self.to_sort_lines.height),
                     bgcolor=colors.LIGHT_BLUE,
-                    left=i * 15,
+                    left=i * 15
                 )
             )
         self.to_sort_lines.update()
@@ -103,7 +101,7 @@ class SortingVisualizer:
         self.slider = Slider(value=10, min=10, max=84, divisions=74, label="{value}", on_change=self.generate_new_array)
         self.gen_new_arr_btn = TextButton(text="Generate New Array", on_click=self.generate_new_array)
         self.bubble_sort_btn = TextButton(text="Bubble Sort", on_click=self.bubble_sort)
-        self.merge_sort_btn = TextButton(text="Quick Sort", on_click=self.quick_sort)
+        self.quick_sort_btn = TextButton(text="Quick Sort", on_click=self.quick_sort)
         self.top_menu = Container(
             content=Row(
                 controls=[
@@ -111,7 +109,7 @@ class SortingVisualizer:
                     Text(value="Change Array Size & Sorting Speed"),
                     self.slider,
                     self.bubble_sort_btn,
-                    self.merge_sort_btn
+                    self.quick_sort_btn
                 ]
             ),
             margin=margin.only(top=40)
@@ -126,7 +124,8 @@ class SortingVisualizer:
                 controls=[
                     self.top_menu,
                     self.t,
-                ]
+                ],
+                # alignment="center"
             ),
             self.to_sort_lines
         )
