@@ -20,7 +20,7 @@ class SortingVisualizer:
         self.page.window_resizable = False
         self.page.update()
 
-    def able_disable_during_sorting(self) -> None:
+    def enable_disable_during_sorting(self) -> None:
         controls_to_check = [
             self.gen_new_arr_btn,
             self.slider,
@@ -34,7 +34,7 @@ class SortingVisualizer:
                 control.disabled = True
         self.page.update()
 
-    def partition(self, low, high):
+    def partition(self, low, high) -> int:
         pivot = self.to_sort_lines.content.controls[high]
         i = low - 1
 
@@ -43,33 +43,32 @@ class SortingVisualizer:
                 i += 1
                 (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.RED, colors.RED)
                 self.to_sort_lines.content.update()
-                time.sleep(0.01)
+                time.sleep(1)
                 (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[j].height) = (self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[i].height)
                 (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.GREEN, colors.GREEN)
                 self.to_sort_lines.content.update()
-                time.sleep(0.01)
+                time.sleep(1)
         (self.to_sort_lines.content.controls[i + 1].height, self.to_sort_lines.content.controls[high].height) = (self.to_sort_lines.content.controls[high].height, self.to_sort_lines.content.controls[i + 1].height)
         (self.to_sort_lines.content.controls[i + 1].bgcolor, self.to_sort_lines.content.controls[high].bgcolor) = (colors.GREEN, colors.GREEN)
         self.to_sort_lines.content.update()
         return i + 1
 
-    def quick_sort_vis(self, low = 0, high = None):
+    def quick_sort_vis(self, low, high):
         if low < high:
-            if not high:
-                high = len(self.to_sort_lines.content.controls)-1
             pi = self.partition(low, high)
             self.quick_sort_vis(low, pi - 1)
             self.quick_sort_vis(pi + 1, high)
 
     def quick_sort(self, e) -> None:
-        self.able_disable_during_sorting()
+        self.enable_disable_during_sorting()
         self.quick_sort_vis(0, len(self.to_sort_lines.content.controls)-1)
-        self.able_disable_during_sorting()
+        self.enable_disable_during_sorting()
     
     def bubble_sort(self, e) -> None:
-        self.able_disable_during_sorting()
+        self.enable_disable_during_sorting()
         for i in range(len(self.to_sort_lines.content.controls)):
             for j in range(len(self.to_sort_lines.content.controls)-1-i):
+                # if the current element height is bigger than the next element height, swap them
                 if self.to_sort_lines.content.controls[j].height > self.to_sort_lines.content.controls[j+1].height:
                     (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.RED, colors.RED)
                     self.to_sort_lines.content.update()
@@ -78,10 +77,16 @@ class SortingVisualizer:
                     (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.GREEN, colors.GREEN)
                     self.to_sort_lines.content.update()
                     time.sleep(0.01)
-                self.to_sort_lines.content.controls[j].bgcolor = colors.LIGHT_BLUE
-                self.to_sort_lines.content.controls[j+1].bgcolor = colors.LIGHT_BLUE
+                else:
+                    (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.GREEN, colors.GREEN)
+                    self.to_sort_lines.content.update()
+                    time.sleep(0.01)
+                (self.to_sort_lines.content.controls[j].bgcolor, self.to_sort_lines.content.controls[j+1].bgcolor) = (colors.LIGHT_BLUE, colors.LIGHT_BLUE)
                 self.to_sort_lines.content.update()
-        self.able_disable_during_sorting()
+            # each iteration, element with index [len(self.to_sort_lines.content.controls)-1-i] is always in the right position
+            self.to_sort_lines.content.controls[len(self.to_sort_lines.content.controls)-1-i].bgcolor = colors.PURPLE
+            self.to_sort_lines.content.update()
+        self.enable_disable_during_sorting()
 
     def generate_new_array(self, e) -> None:
         self.to_sort_lines.content.controls.clear()
