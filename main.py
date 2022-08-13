@@ -36,20 +36,40 @@ class SortingVisualizer:
 
     def partition(self, low, high) -> int:
         pivot = self.to_sort_lines.content.controls[high]
+        (pivot.bgcolor, self.to_sort_lines.content.controls[low].bgcolor) = (colors.YELLOW, colors.YELLOW)
+        self.to_sort_lines.content.update()
         i = low - 1
 
         for j in range(low, high):
+            print(f"j: {j}")
+            input("j loop")
             if self.to_sort_lines.content.controls[j].height <= pivot.height:
                 i += 1
-                (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.RED, colors.RED)
+                print(f"i: {i}")
+                self.to_sort_lines.content.controls[j].bgcolor = colors.GREEN
+                self.to_sort_lines.content.update()
+                time.sleep(1)
+                (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.LIGHT_BLUE, colors.LIGHT_BLUE)
                 self.to_sort_lines.content.update()
                 time.sleep(1)
                 (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[j].height) = (self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[i].height)
-                (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.GREEN, colors.GREEN)
                 self.to_sort_lines.content.update()
                 time.sleep(1)
+            else:
+                self.to_sort_lines.content.controls[j].bgcolor = colors.RED
+                self.to_sort_lines.content.update()
+                time.sleep(1)
+        input("last step")
         (self.to_sort_lines.content.controls[i + 1].height, self.to_sort_lines.content.controls[high].height) = (self.to_sort_lines.content.controls[high].height, self.to_sort_lines.content.controls[i + 1].height)
-        (self.to_sort_lines.content.controls[i + 1].bgcolor, self.to_sort_lines.content.controls[high].bgcolor) = (colors.GREEN, colors.GREEN)
+        self.to_sort_lines.content.update()
+        time.sleep(1)
+        if high == i+1:
+            print("BANG BANG")
+            time.sleep(3)
+            self.to_sort_lines.content.controls[high].bgcolor = colors.PURPLE
+        else:
+            self.to_sort_lines.content.controls[high].bgcolor = colors.ORANGE
+        self.to_sort_lines.content.controls[i + 1].bgcolor = colors.PURPLE
         self.to_sort_lines.content.update()
         return i + 1
 
@@ -58,6 +78,13 @@ class SortingVisualizer:
             pi = self.partition(low, high)
             self.quick_sort_vis(low, pi - 1)
             self.quick_sort_vis(pi + 1, high)
+        elif low == high:
+            print(f"ESSA low: {low} high: {high}")
+            time.sleep(3)
+            self.to_sort_lines.content.controls[low].bgcolor = colors.PURPLE
+            self.to_sort_lines.content.update()
+        else:
+            print(f"low{low} > high{high}")
 
     def quick_sort(self, e) -> None:
         self.enable_disable_during_sorting()
