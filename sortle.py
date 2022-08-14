@@ -65,6 +65,7 @@ class SortingVisualizer:
             self.heapify(N, largest)
     
     def heap_sort(self, e):
+        self.enable_disable_during_sorting()
         N = len(self.to_sort_lines.content.controls)
     
         # Build a maxheap.
@@ -83,6 +84,7 @@ class SortingVisualizer:
             (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[0].bgcolor) = (colors.PURPLE, colors.PURPLE)
             self.to_sort_lines.content.update()
             self.heapify(i, 0)
+        self.enable_disable_during_sorting()
 
     def partition(self, low, high) -> int:
         pivot = self.to_sort_lines.content.controls[high]
