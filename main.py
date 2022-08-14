@@ -25,7 +25,8 @@ class SortingVisualizer:
             self.gen_new_arr_btn,
             self.slider,
             self.bubble_sort_btn,
-            self.quick_sort_btn 
+            self.quick_sort_btn,
+            self.heap_sort_btn
         ]
         for control in controls_to_check:
             if control.disabled:
@@ -33,6 +34,55 @@ class SortingVisualizer:
             else:
                 control.disabled = True
         self.page.update()
+
+    def heapify(self, N, i):
+        largest = i  # Initialize largest as root
+        l = 2 * i + 1     # left = 2*i + 1
+        r = 2 * i + 2     # right = 2*i + 2
+    
+        # See if left child of root exists and is
+        # greater than root
+        if l < N and self.to_sort_lines.content.controls[largest].height < self.to_sort_lines.content.controls[l].height:
+            largest = l
+    
+        # See if right child of root exists and is
+        # greater than root
+        if r < N and self.to_sort_lines.content.controls[largest].height < self.to_sort_lines.content.controls[r].height:
+            largest = r
+    
+        # Change root, if needed
+        if largest != i:
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[largest].bgcolor) = (colors.RED, colors.RED)
+            self.to_sort_lines.content.update()
+            time.sleep(0.05)
+            (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[largest].height) = (self.to_sort_lines.content.controls[largest].height, self.to_sort_lines.content.controls[i].height)  # swap
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[largest].bgcolor) = (colors.GREEN, colors.GREEN)
+            self.to_sort_lines.content.update()
+            time.sleep(0.05)
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[largest].bgcolor) = (colors.LIGHT_BLUE, colors.LIGHT_BLUE)
+            self.to_sort_lines.content.update()
+            # Heapify the root.
+            self.heapify(N, largest)
+    
+    def heap_sort(self, e):
+        N = len(self.to_sort_lines.content.controls)
+    
+        # Build a maxheap.
+        for i in range(N//2 - 1, -1, -1):
+            self.heapify(N, i)
+    
+        # One by one extract elements
+        for i in range(N-1, 0, -1):
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[0].bgcolor) = (colors.RED, colors.RED)
+            self.to_sort_lines.content.update()
+            time.sleep(0.01)
+            (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[0].height) = (self.to_sort_lines.content.controls[0].height, self.to_sort_lines.content.controls[i].height)
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[0].bgcolor) = (colors.GREEN, colors.GREEN)
+            self.to_sort_lines.content.update()
+            time.sleep(0.01)
+            (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[0].bgcolor) = (colors.PURPLE, colors.PURPLE)
+            self.to_sort_lines.content.update()
+            self.heapify(i, 0)
 
     def partition(self, low, high) -> int:
         pivot = self.to_sort_lines.content.controls[high]
@@ -46,10 +96,8 @@ class SortingVisualizer:
                 self.to_sort_lines.content.controls[j].bgcolor = colors.GREEN
                 self.to_sort_lines.content.update()
                 time.sleep(0.01)
-                (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.LIGHT_BLUE, colors.LIGHT_BLUE)
-                self.to_sort_lines.content.update()
-                time.sleep(0.01)
                 (self.to_sort_lines.content.controls[i].height, self.to_sort_lines.content.controls[j].height) = (self.to_sort_lines.content.controls[j].height, self.to_sort_lines.content.controls[i].height)
+                (self.to_sort_lines.content.controls[i].bgcolor, self.to_sort_lines.content.controls[j].bgcolor) = (colors.LIGHT_BLUE, colors.LIGHT_BLUE)
                 self.to_sort_lines.content.update()
                 time.sleep(0.01)
             else:
@@ -123,6 +171,7 @@ class SortingVisualizer:
         self.gen_new_arr_btn = TextButton(text="Generate New Array", on_click=self.generate_new_array)
         self.bubble_sort_btn = TextButton(text="Bubble Sort", on_click=self.bubble_sort)
         self.quick_sort_btn = TextButton(text="Quick Sort", on_click=self.quick_sort)
+        self.heap_sort_btn = TextButton(text="Heap Sort", on_click=self.heap_sort)
         self.top_menu = Container(
             content=Row(
                 controls=[
@@ -130,7 +179,8 @@ class SortingVisualizer:
                     Text(value="Change Array Size & Sorting Speed"),
                     self.slider,
                     self.bubble_sort_btn,
-                    self.quick_sort_btn
+                    self.quick_sort_btn,
+                    self.heap_sort_btn
                 ]
             ),
             margin=margin.only(top=40)
